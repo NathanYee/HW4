@@ -1,3 +1,7 @@
+`include "muxes.v"
+`include "decoders.v"
+`include "register.v" 
+
 //------------------------------------------------------------------------------
 // MIPS register file
 //   width: 32 bits
@@ -17,11 +21,30 @@ input[4:0]	WriteRegister,	// Address of register to write
 input		RegWrite,	// Enable writing of register when High
 input		Clk		// Clock (Positive Edge Triggered)
 );
+  wire storage;
 
+  always @(posedge clk) begin
+    if(RegWrite) begin
+      // write to register
+
+    end
+    else begin
+      if(ReadRegister1) begin
+        // read register1
+        assign ReadData1 = 42;
+
+      end
+
+      if(ReadRegister2) begin
+        // read register2
+        assign ReadData2 = 42;
+      end
+  end
+  end
   // These two lines are clearly wrong.  They are included to showcase how the 
   // test harness works. Delete them after you understand the testing process, 
-  // and replace them with your actual code.
-  assign ReadData1 = 42;
-  assign ReadData2 = 42;
+  // // and replace them with your actual code.
+  // assign ReadData1 = 42;
+  // assign ReadData2 = 42;
 
 endmodule
