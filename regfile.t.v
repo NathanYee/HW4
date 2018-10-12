@@ -120,9 +120,6 @@ output reg		Clk
   ReadRegister2 = 5'd2;
   #5 Clk=1; #5 Clk=0;	// Generate single clock pulse
 
-  $display("ReadData1=%b",ReadData1);
-  $display("ReadData2=%b",ReadData2);
-
   // Verify expectations and report test result
   if((ReadData1 !== 42) || (ReadData2 !== 42)) begin
     dutpassed = 0;	// Set to 'false' on failure
