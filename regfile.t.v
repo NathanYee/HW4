@@ -141,6 +141,113 @@ output reg		Clk
     $display("Test Case 2 Failed");
   end
 
+  // A fully perfect register file. True when device works correctly, false for any errors.
+  //   Write '50' to register2
+  //   Write '10' to register2
+  //   Write '60' to register3, verify with Read Ports 1 and 2
+  //   Passes if register2 is '10' and register3 is '60'
+  WriteRegister = 5'd2;
+  WriteData = 32'd50;
+  RegWrite = 1;
+  #5 Clk=1; #5 Clk=0;
+
+  WriteRegister = 5'd2;
+  WriteData = 32'd10;
+  RegWrite = 1;
+  #5 Clk=1; #5 Clk=0;
+
+  WriteRegister = 5'd3;
+  WriteData = 32'd60;
+  RegWrite = 1;
+  #5 Clk=1; #5 Clk=0;
+
+  ReadRegister1 = 5'd2;
+  ReadRegister2 = 5'd3;
+  #5 Clk=1; #5 Clk=0;
+
+  if((ReadData1 !== 10) || (ReadData2 !== 60)) begin
+    dutpassed = 0;
+    $display("Test Case 3 Failed");
+  end
+
+  // Write Enable is broken / ignored – Register is always written to.
+  // Write '25' to register2
+  // Don't write '15" to register2 because RegWrite is off.
+  // Check that register2 equals '25'
+  WriteRegister = 5'd2;
+  WriteData = 32'd25;
+  RegWrite = 1;
+  #5 Clk=1; #5 Clk=0;
+
+  WriteRegister = 5'd2;
+  WriteData = 32'd15;
+  RegWrite = 0;
+  ReadRegister1 = 5'd2;
+  ReadRegister2 = 5'd2;
+  #5 Clk=1; #5 Clk=0;
+
+  if((ReadData1 !== 25) || (ReadData2 !== 25)) begin
+    dutpassed = 0;
+    $display("Test Case 4 Failed");
+  end
+
+  // Decoder is broken – All registers are written to.
+  // Write '25' to register2
+  // Write '15' to register3
+  // Check if register2 equals register3
+  WriteRegister = 5'd2;
+  WriteData = 32'd25;
+  RegWrite = 1;
+  #5 Clk=1; #5 Clk=0;
+
+  WriteRegister = 5'd3;
+  WriteData = 32'd15;
+  RegWrite = 1;
+  ReadRegister1 = 5'd2;
+  ReadRegister2 = 5'd3;
+  #5 Clk=1; #5 Clk=0;
+
+  if(ReadData1 == ReadData2) begin
+    dutpassed = 0;
+    $display("Test Case 5 Failed");
+  end
+
+  // Register Zero is actually a register instead of the constant value zero.
+  // Write '15' to register0
+  // Check if register0 euqals '15'
+  WriteRegister = 5'd0;
+  WriteData = 32'd15;
+  RegWrite = 1;
+  ReadRegister1 = 5'd0;
+  ReadRegister2 = 5'd0;
+  #5 Clk=1; #5 Clk=0;
+
+  if((ReadData1 !== 15) || (ReadData2 !== 15)) begin
+    dutpassed = 0;
+    $display("Test Case 6 Failed");
+  end
+
+  // Port 2 is broken and always reads register 14 (for example).
+  // Write '15' to register14
+  // Write '10' to register2
+  // Check if register14 equals register2
+  WriteRegister = 5'd14;
+  WriteData = 32'd15;
+  RegWrite = 1;
+  #5 Clk=1; #5 Clk=0;
+
+  WriteRegister = 5'd2;
+  WriteData = 32'd10;
+  RegWrite = 1;
+  ReadRegister1 = 5'd2;
+  ReadRegister2 = 5'd14;
+  #5 Clk=1; #5 Clk=0;
+
+  if(ReadData1 == ReadData2) begin
+    dutpassed = 0;
+    $display("Test Case 7 Failed");
+  end
+
 
   // All done!  Wait a moment and signal test completion.
   #5
